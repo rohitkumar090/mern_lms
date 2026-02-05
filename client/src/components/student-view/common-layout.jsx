@@ -18,9 +18,6 @@ function StudentViewCommonLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <div className="bg-red-500 text-white text-center p-2">
-  FOOTER TEST BLOCK
-</div>
 
       {/* FOOTER */}
       <Footer />
