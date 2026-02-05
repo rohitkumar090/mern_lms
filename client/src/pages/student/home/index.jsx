@@ -54,7 +54,7 @@ function StudentHomePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="px-4 py-6 bg-white">
       <section className="flex flex-col lg:flex-row items-center justify-between py-8 px-4 lg:px-8">
         <div className="lg:w-1/2 lg:pr-12">
           <h1 className="text-2xl  md:text-4xl font-bold mb-2 md:mb-4 ">Learning thet gets you</h1>

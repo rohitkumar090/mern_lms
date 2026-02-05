@@ -49,7 +49,7 @@ if (!emailRegex.test(signUpFormData.userEmail)) {
         userName: "",
         userEmail: "",
         password: "",
-        role: "admin",
+        role: "instructor",
       });
 
    
@@ -85,6 +85,7 @@ if (!emailRegex.test(signUpFormData.userEmail)) {
         authenticate: true,
         user: data.data.user,
       });
+      console.log("AUTH USER:", auth.user);
     } else {
       toast.error(data.message || "Invalid credentials");
 

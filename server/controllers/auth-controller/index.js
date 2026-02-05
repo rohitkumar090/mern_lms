@@ -1,60 +1,74 @@
-
-
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+/* ================= REGISTER ================= */
 const registerUser = async (req, res) => {
   try {
+    const { userName, userEmail, password } = req.body;
 
-    const { userName, userEmail, password, role } = req.body;
-
-    
-    const existingUser = await User.findOne({
-      $or: [
-        { userEmail: userEmail },
-      ],
-    });
-
-
-    if (existingUser) {
+    // 1️⃣ Validation
+    if (!userName || !userEmail || !password) {
       return res.status(400).json({
         success: false,
-        message: "User name or user email already exists",
+        message: "All fields are required",
       });
     }
 
-    if (!userName || !userEmail || !password) {
-  return res.status(400).json({
-    success: false,
-    message: "Missing required fields",
-  });
-}
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format",
+      });
+    }
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // 2️⃣ Check existing user
+    const existingUser = await User.findOne({ userEmail });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
 
-if (!emailRegex.test(userEmail)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid email format",
-  });
-}
-
-
+    // 3️⃣ Hash password
     const hashPassword = await bcrypt.hash(password, 10);
 
+    // 4️⃣ CREATE USER (ROLE CONTROLLED HERE)
     const newUser = new User({
       userName,
       userEmail,
       password: hashPassword,
-      role,
+      role: "instructor", // 🔐 admin fix here
     });
 
     await newUser.save();
 
+    // 5️⃣ AUTO LOGIN (TOKEN)
+    const accessToken = jwt.sign(
+      {
+        _id: newUser._id,
+        userName: newUser.userName,
+        userEmail: newUser.userEmail,
+        role: newUser.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "120m" }
+    );
+
     return res.status(201).json({
       success: true,
-      message: "User registered successfully!",
+      message: "User registered & logged in successfully",
+      data: {
+        accessToken,
+        user: {
+          _id: newUser._id,
+          userName: newUser.userName,
+          userEmail: newUser.userEmail,
+          role: newUser.role,
+        },
+      },
     });
   } catch (error) {
     console.error("REGISTER ERROR:", error);
@@ -65,44 +79,67 @@ if (!emailRegex.test(userEmail)) {
   }
 };
 
-
-
+/* ================= LOGIN ================= */
 const loginUser = async (req, res) => {
-  const { userEmail, password } = req.body;
+  try {
+    const { userEmail, password } = req.body;
 
-  const checkUser = await User.findOne({ userEmail });
+    if (!userEmail || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password required",
+      });
+    }
 
-  if (!checkUser || !( await bcrypt.compare(password, checkUser.password))) {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid credentials",
-    });
-  }
+    const checkUser = await User.findOne({ userEmail });
 
-  const accessToken = jwt.sign(
-    {
-      _id: checkUser._id,
-      userName: checkUser.userName,
-      userEmail: checkUser.userEmail,
-      role: checkUser.role,
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "120m" }
-  );
+    if (!checkUser) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
 
-  res.status(200).json({
-    success: true,
-    message: "Logged in successfully",
-    data: {
-      accessToken,
-      user: {
+    const isMatch = await bcrypt.compare(password, checkUser.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    const accessToken = jwt.sign(
+      {
         _id: checkUser._id,
         userName: checkUser.userName,
         userEmail: checkUser.userEmail,
         role: checkUser.role,
       },
-    },
-  });
+      process.env.JWT_SECRET,
+      { expiresIn: "120m" }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged in successfully",
+      data: {
+        accessToken,
+        user: {
+          _id: checkUser._id,
+          userName: checkUser.userName,
+          userEmail: checkUser.userEmail,
+          role: checkUser.role,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during login",
+    });
+  }
 };
 
 module.exports = { registerUser, loginUser };

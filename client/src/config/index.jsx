@@ -49,7 +49,7 @@ export const initialSignUpFormData = {
   userName: "",
   userEmail: "",
   password: "",
-  role:"admin",
+  role:"instructor",
 };
 
 export const languageOptions = [
