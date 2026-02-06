@@ -1,5 +1,3 @@
-
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,65 +26,62 @@ function StudentViewCourseProgressPage() {
   const { auth } = useContext(AuthContext);
   const { studentCurrentCourseProgress, setStudentCurrentCourseProgress } =
     useContext(StudentContext);
+
   const [lockCourse, setLockCourse] = useState(false);
   const [currentLecture, setCurrentLecture] = useState(null);
   const [showCourseCompleteDialog, setShowCourseCompleteDialog] =
     useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [isSideBarOpen, setIsSideBarOpen] = useState(true);
+
   const { id } = useParams();
 
   async function fetchCurrentCourseProgress() {
     const response = await getCurrentCourseProgressService(auth?.user?._id, id);
+
     if (response?.success) {
       if (!response?.data?.isPurchased) {
         setLockCourse(true);
+        return;
+      }
+
+      setStudentCurrentCourseProgress({
+        courseDetails: response?.data?.courseDetails,
+        progress: response?.data?.progress,
+      });
+
+      if (response?.data?.completed) {
+        setCurrentLecture(response?.data?.courseDetails?.curriculum[0]);
+        setShowCourseCompleteDialog(true);
+        setShowConfetti(true);
+        return;
+      }
+
+      if (response?.data?.progress?.length === 0) {
+        setCurrentLecture(response?.data?.courseDetails?.curriculum[0]);
       } else {
-        setStudentCurrentCourseProgress({
-          courseDetails: response?.data?.courseDetails,
-          progress: response?.data?.progress,
-        });
+        const lastViewedIndex = response?.data?.progress.reduceRight(
+          (acc, item, index) =>
+            acc === -1 && item.viewed ? index : acc,
+          -1
+        );
 
-        if (response?.data?.completed) {
-          setCurrentLecture(response?.data?.courseDetails?.curriculum[0]);
-          setShowCourseCompleteDialog(true);
-          setShowConfetti(true);
-
-          return;
-        }
-
-        if (response?.data?.progress?.length === 0) {
-          setCurrentLecture(response?.data?.courseDetails?.curriculum[0]);
-        } else {
-          const lastIndexOfViewedAsTrue = response?.data?.progress.reduceRight(
-            (acc, obj, index) => {
-              return acc === -1 && obj.viewed ? index : acc;
-            },
-            -1
-          );
-
-          setCurrentLecture(
-            response?.data?.courseDetails?.curriculum[
-            lastIndexOfViewedAsTrue + 1
-            ]
-          );
-        }
+        setCurrentLecture(
+          response?.data?.courseDetails?.curriculum[lastViewedIndex + 1]
+        );
       }
     }
   }
 
   async function updateCourseProgress() {
-    if (currentLecture) {
-      const response = await markLectureAsViewedService(
-        auth?.user?._id,
-        studentCurrentCourseProgress?.courseDetails?._id,
-        currentLecture._id
-      );
+    if (!currentLecture) return;
 
-      if (response?.success) {
-        fetchCurrentCourseProgress();
-      }
-    }
+    const response = await markLectureAsViewedService(
+      auth?.user?._id,
+      studentCurrentCourseProgress?.courseDetails?._id,
+      currentLecture._id
+    );
+
+    if (response?.success) fetchCurrentCourseProgress();
   }
 
   async function handleRewatchCourse() {
@@ -108,117 +103,127 @@ function StudentViewCourseProgressPage() {
   }, [id]);
 
   useEffect(() => {
-    if (currentLecture && currentLecture.progressValue === 1) {
+    if (currentLecture?.progressValue === 1) {
       updateCourseProgress();
     }
   }, [currentLecture?.progressValue]);
 
-
   useEffect(() => {
-    if (showConfetti) setTimeout(() => setShowConfetti(false), 15000);
+    if (showConfetti) {
+      const timer = setTimeout(() => setShowConfetti(false), 15000);
+      return () => clearTimeout(timer);
+    }
   }, [showConfetti]);
 
-
-
   return (
-    <div className="flex flex-col h-screen bg-[#1c1d1f] text-white">
+    <div className="flex flex-col bg-[#1c1d1f] text-white overflow-hidden">
       {showConfetti && <Confetti />}
-      <div className="flex items-center justify-between p-4 bg-[#1c1d1f] border-b border-gray-700">
-        <div className="flex items-center space-x-4">
-          <Button
-            onClick={() => navigate("/student-courses")}
-            className="text-white"
-            variant="ghost"
-            size="sm"
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            <p className="text-white"> Back to My Courses Page</p>
-          </Button>
-          <h1 className="text-lg font-bold hidden md:block">
-            {studentCurrentCourseProgress?.courseDetails?.title}
-          </h1>
-        </div>
-      </div>
-      <div className="md:flex flex-1 overflow-y-auto scrollbar-thin">
 
-        <div className="flex-1 bg-black p-">
+      <div className=" border-gray-700 border-b">
+        <div className="flex items-center gap-4 p-4  max-w-[1420px] m-auto">
+        <Button
+          onClick={() => navigate("/student-courses")}
+          variant="ghost"
+          size="sm"
+          className=" hover:text-indigo-600"
+        >
+          <ChevronLeft className="h-4 w-4 mr-2 text-indigo-600 font-extrabold" />
+          Back to My Courses
+        </Button>
+
+        <h1 className="text-lg font-semibold">
+          {studentCurrentCourseProgress?.courseDetails?.title}
+        </h1>
+      </div>
+      </div>
+
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden max-w-[1420px] m-auto" >
+        <div className="flex flex-col flex-1">
           {!currentLecture ? (
-            <div className="h-[400px] flex items-center justify-center text-gray-400">
+            <div className="flex items-center justify-center h-[300px] text-gray-400">
               Loading lecture...
             </div>
           ) : (
             <>
-              <div className="max-h-[550px] w-full aspect-video p-1 ">
-                <VideoPlayer
-                  url={currentLecture.videoUrl}
-                  onProgressUpdate={setCurrentLecture}
-                  progressData={currentLecture}
-                />
+              <div className="w-full aspect-video max-h-[380px] md:max-h-[400px] px-4 pt-4 pb-2">
+                <div className="h-full rounded-xl overflow-hidden border border-gray-700">
+                  <VideoPlayer
+                    url={currentLecture.videoUrl}
+                    onProgressUpdate={setCurrentLecture}
+                    progressData={currentLecture}
+                  />
+                </div>
               </div>
-              <div className="p-6 border-t border-gray-700 bg-[#1c1d1f]">
-                <h2 className="text-xl font-semibold text-white">
+
+              <div className="p-4 mb-4 pb-3">
+                <h2 className="text-lg font-semibold leading-tight">
                   {currentLecture.title}
                 </h2>
               </div>
             </>
           )}
         </div>
+
         <div
-          className={`flex flex-col  bg-[#1c1d1f] text-white transition-all ${showCourseCompleteDialog ? "blur-sm pointer-events-none" : ""}`}>
-          <Tabs defaultValue="content" className=" flex flex-col">
-            <TabsList className="grid bg-[#1c1d1f] w-full grid-cols-2 p-0 h-14">
-              <TabsTrigger
-                value="content"
-                className=" text-black rounded-none h-full"
-              >
-                <p className="text-white"> Course Content </p>
-              </TabsTrigger>
-              <TabsTrigger
-                value="overview"
-                className=" text-black rounded-none h-full"
-              >
-                <p className="text-white">  Overview </p>
-              </TabsTrigger>
+          className={`w-full md:w-[380px] flex flex-col border-t md:border-t-0 md:border-l border-gray-700 ${
+            showCourseCompleteDialog
+              ? "blur-sm pointer-events-none"
+              : ""
+          }`}
+        >
+          <Tabs defaultValue="content" className="flex flex-col h-full">
+            <TabsList className="grid grid-cols-2 h-14 bg-[#1c1d1f]">
+              <TabsTrigger value="content" className="hover:text-indigo-600">Course Content</TabsTrigger>
+              <TabsTrigger value="overview" className="hover:text-indigo-600">Overview</TabsTrigger>
             </TabsList>
-            <TabsContent value="content">
-              <ScrollArea className="h-[500px]">
-                <div className="p-4 space-y-4">
+
+            <TabsContent value="content" className="flex-1">
+              <ScrollArea className="h-full">
+                <div className="p-4 space-y-3">
                   {studentCurrentCourseProgress?.courseDetails?.curriculum.map(
-                    (item) => (
-                      <div
-                        className="flex items-center space-x-2 text-sm text-white font-bold cursor-pointer"
-                        key={item._id}
-                        onClick={() => setCurrentLecture(item)}
-                      >
-                        {studentCurrentCourseProgress?.progress?.find(
-                          (progressItem) => progressItem.lectureId === item._id
-                        )?.viewed ? (
-                          <Check className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <Play className="h-4 w-4 " />
-                        )}
-                        <span>{item?.title}</span>
-                      </div>
-                    )
+                    (item) => {
+                      const viewed =
+                        studentCurrentCourseProgress?.progress?.find(
+                          (p) => p.lectureId === item._id
+                        )?.viewed;
+
+                      return (
+                        <div
+                          key={item._id}
+                          onClick={() => setCurrentLecture(item)}
+                          className="flex items-center gap-3 cursor-pointer rounded-lg px-3 py-2 hover:bg-white/5"
+                        >
+                          {viewed ? (
+                            <Check className="h-4 w-4 text-green-400" />
+                          ) : (
+                            <Play className="h-4 w-4" />
+                          )}
+                          <span className="text-sm font-medium">
+                            {item.title}
+                          </span>
+                        </div>
+                      );
+                    }
                   )}
                 </div>
               </ScrollArea>
             </TabsContent>
-            <TabsContent value="overview" className="flex-1 overflow-hidden">
-              <ScrollArea className=" w-[400px] h-full">
-                <div className="p-4">
-                  <h2 className="text-xl font-bold mb-4">About this course</h2>
-                  <p className="text-gray-400">
-                    {studentCurrentCourseProgress?.courseDetails?.description}
-                  </p>
+
+            {/* OVERVIEW */}
+            <TabsContent value="overview" className="flex-1">
+              <ScrollArea className="h-full">
+                <div className="p-4 text-sm text-gray-300 leading-relaxed">
+                  {studentCurrentCourseProgress?.courseDetails?.description}
                 </div>
               </ScrollArea>
             </TabsContent>
           </Tabs>
         </div>
       </div>
-      <Dialog open={lockCourse} >
-        <DialogContent className="sm:w-[425px]">
+
+      {/* LOCK COURSE */}
+      <Dialog open={lockCourse}>
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>You can't view this page</DialogTitle>
             <DialogDescription>
@@ -227,23 +232,22 @@ function StudentViewCourseProgressPage() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-      <Dialog open={showCourseCompleteDialog}
+
+      {/* COURSE COMPLETE */}
+      <Dialog
+        open={showCourseCompleteDialog}
         onOpenChange={(open) => {
           setShowCourseCompleteDialog(open);
           if (!open) setShowConfetti(false);
-        }}>
-        <DialogContent
-          className="w-[320px] sm:w-[420px] text-center bg-white text-black 
-               backdrop-blur-xl border border-x-gray-50 
-               animate-in zoom-in-95 rounded-[12px]"
-        >
+        }}
+      >
+        <DialogContent className="text-center bg-white text-black rounded-xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">
-              Congratulations!
+              Congratulations 🎉
             </DialogTitle>
-
-            <DialogDescription className="mt-3 text-black">
-              You have successfully completed this course 
+            <DialogDescription className="mt-3">
+              You have successfully completed this course
             </DialogDescription>
           </DialogHeader>
 
@@ -251,14 +255,12 @@ function StudentViewCourseProgressPage() {
             <Button onClick={() => navigate("/student-courses")}>
               Go to My Courses
             </Button>
-
             <Button variant="outline" onClick={handleRewatchCourse}>
               Rewatch Course
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }

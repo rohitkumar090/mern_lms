@@ -1,12 +1,12 @@
-const express = require("express");
-const {
-  createOrder,
-  capturePaymentAndFinalizeOrder,
-} = require("../../controllers/student-controller/order-controller");
+// const express = require("express");
+// const {
+//   createOrder,
+//   capturePaymentAndFinalizeOrder,
+// } = require("../../controllers/student-controller/order-controller");
 
-const router = express.Router();
+// const router = express.Router();
 
-router.post("/create", createOrder);
-router.post("/capture", capturePaymentAndFinalizeOrder);
+// router.post("/create", createOrder);
+// router.post("/capture", capturePaymentAndFinalizeOrder);
 
-module.exports = router;
+// module.exports = router;

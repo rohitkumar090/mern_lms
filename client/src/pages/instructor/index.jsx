@@ -46,9 +46,7 @@ function InstructorDashboardpage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-
-      {/* ================= MOBILE HEADER ================= */}
+    <div className="flex md:h-[695px] bg-gray-100 max-w-[1420px] m-auto">
       <header className="md:hidden fixed top-0 left-0 right-0 bg-white border-b z-50 flex items-center justify-between px-4 py-3">
         <h2 className="text-lg font-bold">Instructor View</h2>
 
@@ -85,7 +83,6 @@ function InstructorDashboardpage() {
         )}
       </header>
 
-      {/* ================= DESKTOP SIDEBAR ================= */}
       <aside className="w-64 bg-white shadow-md hidden md:flex flex-col">
         <div className="p-4 flex flex-col flex-1">
           <h2 className="text-2xl font-bold mb-4">Instructor View</h2>
@@ -117,7 +114,6 @@ function InstructorDashboardpage() {
         </div>
       </aside>
 
-      {/* ================= MAIN CONTENT ================= */}
       <main className="flex-1 p-4 md:p-8 mt-14 md:mt-0 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab}>

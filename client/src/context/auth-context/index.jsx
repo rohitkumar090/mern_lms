@@ -49,7 +49,7 @@ if (!emailRegex.test(signUpFormData.userEmail)) {
         userName: "",
         userEmail: "",
         password: "",
-        role: "instructor",
+        role: "student",
       });
 
    

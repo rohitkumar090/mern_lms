@@ -42,7 +42,7 @@ function InstructorCourses({ listOfCourses }) {
 
       if (response?.data?.success) {
         toast.success("Course deleted successfully");
-        navigate(0); // ✅ now works
+        navigate(0); 
       } else {
         toast.error("Failed to delete course");
       }
@@ -54,7 +54,7 @@ function InstructorCourses({ listOfCourses }) {
 
 
   return (
-    <Card>
+    <Card className="max-w-1200px] m-auto">
       <CardHeader className="flex justify-between flex-row items-center">
         <CardTitle className="text-xl md:text-3xl font-bold md:font-extrabold">All Courses</CardTitle>
         <Button

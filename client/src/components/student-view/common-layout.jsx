@@ -6,7 +6,6 @@ function StudentViewCommonLayout() {
   const location = useLocation();
 
   return (
-    
     <div className="min-h-screen flex flex-col">
       
       {/* HEADER */}
@@ -15,9 +14,9 @@ function StudentViewCommonLayout() {
       )}
 
       {/* MAIN CONTENT */}
-      <main className="flex-1">
+      
         <Outlet />
-      </main>
+      
 
       {/* FOOTER */}
       <Footer />

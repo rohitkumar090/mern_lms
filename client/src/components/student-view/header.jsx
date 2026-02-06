@@ -16,48 +16,57 @@ function StudentViewCommonHeader() {
   }
 
   return (
-    <header className="flex items-center justify-between p-4 border-b relative">
-      {/* Logo */}
-      <Link to="/home" className="flex items-center gap-2">
-        <GraduationCap className="h-8 w-8" />
-        <span className="font-extrabold md:text-xl text-[14px]">
-          LMS LEARN
-        </span>
-      </Link>
+    <header className="fixed top-0 w-full z-50 bg-white border-b shadow-sm">
+      <div className="max-w-[1420px] mx-auto px-4 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/home" className="flex items-center gap-2">
+          <GraduationCap className="h-8 w-8 text-indigo-600" />
+          <span className="font-extrabold text-lg md:text-xl text-gray-900">
+            LMS LEARN
+          </span>
+        </Link>
 
-      {/* Desktop Menu */}
-      <div className="hidden md:flex items-center gap-6">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/courses")}
-        >
-          Explore Courses
-        </Button>
-
-        <div
-          onClick={() => navigate("/student-courses")}
-          className="flex cursor-pointer items-center gap-2"
-        >
-          <span className="font-semibold">My Courses</span>
-          <TvMinimalPlay className="w-6 h-6" />
-        </div>
-
-        <Button onClick={handleLogout}>Sign Out</Button>
-      </div>
-
-      {/* Mobile Menu Button */}
-      <button
-        className="md:hidden"
-        onClick={() => setOpenMenu(!openMenu)}
-      >
-        {openMenu ? <X size={28} /> : <Menu size={28} />}
-      </button>
-
-      {/* Mobile Dropdown Menu */}
-      {openMenu && (
-        <div className="absolute top-16 right-4 w-52 bg-white shadow-lg rounded-md border flex flex-col gap-2 p-4 md:hidden z-50">
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-6">
           <Button
             variant="ghost"
+            className="text-gray-700 hover:text-indigo-600"
+            onClick={() => navigate("/courses")}
+          >
+            Explore Courses
+          </Button>
+
+          <div
+            onClick={() => navigate("/student-courses")}
+            className="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-indigo-600"
+          >
+            <TvMinimalPlay className="h-6 w-6" />
+            <span className="font-semibold">My Courses</span>
+          </div>
+
+          <Button
+            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+            onClick={handleLogout}
+          >
+            Sign Out
+          </Button>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-gray-800"
+          onClick={() => setOpenMenu(!openMenu)}
+        >
+          {openMenu ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {openMenu && (
+        <div className="md:hidden absolute top-[72px] right-4 w-56 bg-white rounded-xl shadow-xl border p-4 flex flex-col gap-2">
+          <Button
+            variant="ghost"
+            className="justify-start"
             onClick={() => {
               navigate("/courses");
               setOpenMenu(false);
@@ -68,6 +77,7 @@ function StudentViewCommonHeader() {
 
           <Button
             variant="ghost"
+            className="justify-start"
             onClick={() => {
               navigate("/student-courses");
               setOpenMenu(false);
@@ -77,7 +87,7 @@ function StudentViewCommonHeader() {
           </Button>
 
           <Button
-            variant="destructive"
+            className="bg-red-500 hover:bg-red-600 text-white"
             onClick={handleLogout}
           >
             Sign Out

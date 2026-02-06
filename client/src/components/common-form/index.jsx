@@ -12,7 +12,7 @@ function CommonForm({
   isButtonDisabled = false,
 }) {
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} >
      
       <FormControls
         formControls={formControls}
