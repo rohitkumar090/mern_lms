@@ -1,4 +1,5 @@
 
+
 export const signUpFormControls = [
   {
     name: "userName",
@@ -49,11 +50,10 @@ export const initialSignUpFormData = {
   userName: "",
   userEmail: "",
   password: "",
-  role:"student",
 };
 
 export const languageOptions = [
-  { id: "english", label: "English" },
+  { id: "English", label: "English" },
   { id: "spanish", label: "Spanish" },
   { id: "french", label: "French" },
   { id: "german", label: "German" },

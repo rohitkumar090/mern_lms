@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 /* ================= REGISTER ================= */
 const registerUser = async (req, res) => {
+
   try {
     const { userName, userEmail, password } = req.body;
 
@@ -32,20 +33,17 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // 3️⃣ Hash password
     const hashPassword = await bcrypt.hash(password, 10);
 
-    // 4️⃣ CREATE USER (ROLE CONTROLLED HERE)
     const newUser = new User({
       userName,
       userEmail,
       password: hashPassword,
-      role: "instructor", // 🔐 admin fix here
+      role: "student", 
     });
 
     await newUser.save();
 
-    // 5️⃣ AUTO LOGIN (TOKEN)
     const accessToken = jwt.sign(
       {
         _id: newUser._id,

@@ -20,7 +20,7 @@ function App() {
 
   return (
     <>
-    <Toaster richColors position="top-right" />
+    <Toaster richColors position="bottom-right" />
     <Routes>
       <Route
         path="/auth"

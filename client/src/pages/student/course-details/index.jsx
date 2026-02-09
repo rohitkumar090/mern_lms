@@ -15,7 +15,7 @@ import {
   fetchStudentViewCourseDetailsService,
   enrollFreeCourseService,
 } from "@/services";
-import { CheckCircle, Globe, Lock, PlayCircle } from "lucide-react";
+import { Globe, Lock, PlayCircle } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -65,13 +65,13 @@ function StudentViewCourseDetailsPage() {
       });
 
       if (response?.data?.success) {
-        toast.success("Course added successfully 🎉");
+        toast.success("Course added successfully ");
         setTimeout(() => navigate("/student-courses"), 1200);
       }
     } catch (error) {
       const msg = error?.response?.data?.message;
       if (msg === "Already enrolled in this course") {
-        toast.info("You are already enrolled 🙂");
+        toast.info("You are already enrolled ");
         navigate("/student-courses");
       } else toast.error(msg || "Failed to enroll");
     }
@@ -110,7 +110,6 @@ function StudentViewCourseDetailsPage() {
 
   return (
     <div className="bg-gray-100 min-h-screen pt-20">
-      {/* ================= HEADER ================= */}
       <div className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
         <div className="max-w-[1440px] mx-auto px-6 py-12">
           <h1 className="text-3xl font-bold mb-2">
@@ -124,18 +123,12 @@ function StudentViewCourseDetailsPage() {
             <span>
               Created by {studentViewCourseDetails?.instructorName}
             </span>
-            <span className="flex items-center gap-1">
-              <Globe className="h-4 w-4" />
-              {studentViewCourseDetails?.primaryLanguage}
-            </span>
           </div>
         </div>
       </div>
 
-      {/* ================= CONTENT ================= */}
       <div className="max-w-[1440px] mx-auto px-6 py-10">
         <div className="flex flex-col lg:flex-row gap-10 items-start">
-          {/* LEFT */}
           <main className="flex-1 min-w-0 space-y-8">
             <Card>
               <CardHeader>
@@ -193,8 +186,6 @@ function StudentViewCourseDetailsPage() {
               </CardContent>
             </Card>
           </main>
-
-          {/* RIGHT */}
           <aside className="w-full lg:w-[420px] shrink-0">
             <Card className="sticky top-24 shadow-lg">
               <CardContent className="p-4">

@@ -18,7 +18,6 @@ function StudentViewCommonHeader() {
   return (
     <header className="fixed top-0 w-full z-50 bg-white border-b shadow-sm">
       <div className="max-w-[1420px] mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/home" className="flex items-center gap-2">
           <GraduationCap className="h-8 w-8 text-indigo-600" />
           <span className="font-extrabold text-lg md:text-xl text-gray-900">
@@ -26,7 +25,6 @@ function StudentViewCommonHeader() {
           </span>
         </Link>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6">
           <Button
             variant="ghost"
@@ -52,7 +50,6 @@ function StudentViewCommonHeader() {
           </Button>
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           className="md:hidden text-gray-800"
           onClick={() => setOpenMenu(!openMenu)}
@@ -61,7 +58,6 @@ function StudentViewCommonHeader() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {openMenu && (
         <div className="md:hidden absolute top-[72px] right-4 w-56 bg-white rounded-xl shadow-xl border p-4 flex flex-col gap-2">
           <Button

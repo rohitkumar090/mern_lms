@@ -7,18 +7,12 @@ function StudentViewCommonLayout() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      
-      {/* HEADER */}
       {!location.pathname.includes("course-progress") && (
         <StudentViewCommonHeader />
       )}
 
-      {/* MAIN CONTENT */}
-      
-        <Outlet />
-      
+      <Outlet />
 
-      {/* FOOTER */}
       <Footer />
     </div>
   );

@@ -1,3 +1,4 @@
+
 import { Navigate, useLocation, Outlet } from "react-router-dom";
 
 function RouteGuard({ authenticated, user, element }) {

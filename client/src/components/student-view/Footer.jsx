@@ -6,7 +6,6 @@ function Footer() {
     <footer className="bg-[#0f172a] text-gray-300">
       <div className="max-w-[1420px] mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-3">
               <GraduationCap className="h-7 w-7 text-indigo-400" />
@@ -18,7 +17,6 @@ function Footer() {
             </p>
           </div>
 
-          {/* Links */}
           <div>
             <h3 className="text-white font-semibold mb-3">Quick Links</h3>
             <ul className="space-y-2 text-sm">
@@ -34,8 +32,6 @@ function Footer() {
               ))}
             </ul>
           </div>
-
-          {/* Support */}
           <div>
             <h3 className="text-white font-semibold mb-3">Support</h3>
             <ul className="space-y-2 text-sm">
@@ -50,8 +46,6 @@ function Footer() {
               </li>
             </ul>
           </div>
-
-          {/* Contact */}
           <div>
             <h3 className="text-white font-semibold mb-3">Contact</h3>
             <ul className="space-y-2 text-sm">
